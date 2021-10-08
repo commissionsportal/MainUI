@@ -2,7 +2,7 @@
 The main Commissions Portal UI project
 
 
-Please set your client Api token when adding Identity in Statup.cs
+Please set your client Api token when adding Identity in Statup.cs  
 **services.AddIdentity("{token}");**
 
 
