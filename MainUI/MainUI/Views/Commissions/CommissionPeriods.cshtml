@@ -1,0 +1,116 @@
+﻿@model CommissonPeriodsViewModel
+
+@{
+    ViewData["Title"] = "CommissionRuns";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@section Title
+{
+    <div class="col">
+        <h2 class="page-title">
+            Commission Periods
+        </h2>
+    </div>
+}
+
+<div class="container-xl">
+    <div class="row row-cards">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body border-bottom py-3">
+                    <div class="d-flex">
+                        <div class="ms-auto text-muted">
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table card-table table-vcenter text-nowrap datatable">
+                        <thead>
+                            <tr>
+                                <th class="text-center w-1"><i class="icon-people"></i></th>
+                                <th>Period</th>
+                                <th>Status</th>
+                                <th>Snapshots</th>
+                                <th>Paid Count</th>
+                                <th>Total Volume</th>
+                                <th>Commission Paid</th>
+                                <th class="text-center">Percent Paid</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var period in Model.Periods)
+                            {
+                            <tr>
+                                <td class="text-center">
+                                    @*<div class="avatar d-block" style="background-image: url(demo/faces/f/26.jpg)">
+                                        <span class="avatar-status bg-green"></span>
+                                    </div>*@
+                                </td>
+                                <td>
+                                    <div><a asp-area="" asp-controller="Commissions" asp-action="CommissionPeriodDetail" asp-route-templateId="@period.CompensationPlanId" asp-route-periodId="@period.Id">@period.BeginString - @period.EndString</a></div>
+                                    <div class="small text-muted">
+                                        @period.CompensationPlanName
+                                    </div>
+                                </td>
+                                <td>
+                                    @period.Status
+                                </td>
+                                @*<td>
+            @if (period.ShowCommit)
+            {
+                <div class="item-action dropdown">
+                    <a href="javascript:void(0)" data-toggle="dropdown" class="icon"><span class="status-icon bg-@period.StatusClass"></span> @period.Status <i class="fa fa-caret-down"></i></a>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <a href="javascript:void(0)" class="dropdown-item"><span class="status-icon bg-secondary"></span> Open </a>
+                        <a href="javascript:void(0)" class="dropdown-item"><span class="status-icon bg-warning"></span> Pending </a>
+                        <a href="javascript:void(0)" class="dropdown-item"><span class="status-icon bg-success"></span> Committed</a>
+                        <div class="dropdown-divider"></div>
+                        <a href="javascript:void(0)" class="dropdown-item"><i class="dropdown-icon fe fe-link"></i> Create Snapshot</a>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <span class="status-icon bg-@period.StatusClass"></span> @period.Status
+            }
+        </td>*@
+                                <td>@period.Snapshots.Length</td>
+                                <td>@period.PaidCountFormatted</td>
+                                <td>@period.TotalVolumeFormatted</td>
+                                <td>@period.TotalPaidFormatted</td>
+                                <td class="text-center">
+                                    <div class="mx-auto chart-circle chart-circle-xs" data-value="@period.PercentValue" data-thickness="3" data-color="blue">
+                                        <div class="chart-circle-value">@period.PercentDisplay%</div>
+                                    </div>
+                                </td>
+                            </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer d-flex align-items-center">
+                    <ul class="pagination m-0 ms-auto">
+                        <li class="page-item">
+                            <a class="page-link" href="/Commissions/CommissionPeriods/@Model.Prev.ToString("MM-dd-yyyy")" tabindex="-1">
+                                <!-- Download SVG icon from http://tabler-icons.io/i/chevron-left -->
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><polyline points="15 6 9 12 15 18" /></svg>
+                                prev
+                            </a>
+                        </li>
+
+                        <li class="page-item">
+                            <a class="page-link" href="/Commissions/CommissionPeriods/@Model.Next.ToString("MM-dd-yyyy")">
+                                next <!-- Download SVG icon from http://tabler-icons.io/i/chevron-right -->
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><polyline points="9 6 15 12 9 18" /></svg>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,418 @@
+﻿@model MainUI.Models.CustomerDetailViewModel;
+@{
+    ViewData["Title"] = "CustomerDetail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Title
+{
+    <div class="col">
+        <!-- Page pre-title -->
+        <div class="page-pretitle">
+            @Model.Period.BeginString - @Model.Period.EndString
+        </div>
+        <h2 class="page-title">
+            Customer Detail
+        </h2>
+    </div>
+}
+
+
+<div class="container-xl">
+    <div class="row row-cards">
+        <div class="col-md-6 col-xl-4">
+            <div class="row row-cards">
+                <div class="col-12">
+                    <a class="card card-link" href="#">
+                        <div class="card-cover card-cover-blurred text-center" style="background-image: url(./static/photos/2854fd67ddbd6217.jpg)">
+                            <span class="avatar avatar-xl avatar-thumb avatar-rounded" style="background-image: url(@Model.Customer.ProfileImage)"></span>
+                        </div>
+                        <div class="card-body text-center">
+                            <div class="card-title mb-1">@Model.Customer.FullName</div>
+                            @*<div class="text-muted">M</div>*@
+                        </div>
+                    </a>
+                </div>
+                <div class="col-12 border-0">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="card-title">Basic info</div>
+                            <div class="mb-2">
+                                <!-- Download SVG icon from http://tabler-icons.io/i/book -->
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" /><path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" /><line x1="3" y1="6" x2="3" y2="19" /><line x1="12" y1="6" x2="12" y2="19" /><line x1="21" y1="6" x2="21" y2="19" /></svg>
+                                Customer Type: <strong>@Model.Customer.CustomerTypeText</strong>
+                            </div>
+                            <div class="mb-2">
+                                <!-- Download SVG icon from http://tabler-icons.io/i/map-pin -->
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><circle cx="12" cy="11" r="3" /><path d="M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z" /></svg>
+                                Status: <strong>@Model.Customer.Status</strong>
+                            </div>
+                            <div class="mb-2">
+                                <!-- Download SVG icon from http://tabler-icons.io/i/briefcase -->
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><rect x="3" y="7" width="18" height="13" rx="2" /><path d="M8 7v-2a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v2" /><line x1="12" y1="12" x2="12" y2="12.01" /><path d="M3 13a20 20 0 0 0 18 0" /></svg>
+                                Email: <strong>@Model.Customer.EmailAddress</strong>
+                            </div>
+                            <div class="mb-2">
+                                <!-- Download SVG icon from http://tabler-icons.io/i/home -->
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><polyline points="5 12 3 12 12 3 21 12 19 12" /><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" /><path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" /></svg>
+                                Phone: <strong>@Model.Customer.MainPhone</strong>
+                            </div>
+                            <div class="mb-2">
+                                <!-- Download SVG icon from http://tabler-icons.io/i/calendar -->
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><rect x="4" y="5" width="16" height="16" rx="2" /><line x1="16" y1="3" x2="16" y2="7" /><line x1="8" y1="3" x2="8" y2="7" /><line x1="4" y1="11" x2="20" y2="11" /><line x1="11" y1="15" x2="12" y2="15" /><line x1="12" y1="15" x2="12" y2="18" /></svg>
+                                Enroll date: <strong>@Model.Customer.EnrollDate.Value.ToShortDateString()</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                   @if (Model.HasUpline())
+                   {
+                    <a class="card card-link" sp-controller="Customers" asp-action="CustomerDetail" asp-route-id="@Model.Upline.Id">
+                        <div class="card-body">
+                            <div class="card-title">Team Leader</div>
+                            <div class="row">
+                                <div class="col-auto">
+                                    <span class="avatar rounded" style="background-image: url(@Model.Upline.ProfileImage)"></span>
+                                </div>
+                                <div class="col">
+                                    <div class="font-weight-medium">@Model.Upline.FullName</div>
+                                    @if (Model.Upline.EnrollDate.HasValue)
+                                    {
+                                        <div class="text-muted">@Model.Upline.EnrollDate.Value.ToShortDateString()</div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                   }
+                </div>
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-status-top bg-success"></div>
+                        <div class="card-body">
+                            <h3 class="card-title">
+                                Enrollment Tree
+                            </h3>
+                            <div class="avatar-list avatar-list-stacked mb-3">
+                                @foreach (var customer in Model.WholesaleCustomers)
+                                {
+                                    <span class="avatar avatar-sm avatar-rounded" style="background-image: url(@customer.ProfileImage)"></span>
+                                }
+                            </div>
+                            <div class="card-meta d-flex justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <span>@Model.TotalWholesale.ToString("N0")/@Model.EnrollmentCount.ToString("N0") Wholesale Customers</span>
+                                </div>
+                                <div class="col-auto">
+                                    @*<a href="#">View Downline</a>*@
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-8">
+            <div class="row row-cards">
+                <div class="col-md-12 col-xl-6">
+
+                    <ul class="nav nav-tabs" id="myTab" role="tablist" style="display:none;">
+
+                        @foreach (var rank in Model.Period.RankAdvance)
+                        {
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link" id="T_@rank.RankId-tab" data-toggle="tab" href="#T_@rank.RankId" role="tab" aria-controls="T_@rank.RankId" aria-selected="true">@rank.RankId</a>
+                            </li>
+                        }
+                    </ul>
+                    <div class="card" style="height: calc(19rem + 10px)">
+                        <div class="tab-content" id="myTabContent">
+
+                            @foreach (var rank in Model.Period.RankAdvance)
+                            {
+                            <div class="tab-pane fade @Model.RankActiveText(rank.RankId)" id="T_@rank.RankId" role="tabpanel" aria-labelledby="T_@rank.RankId-tab">
+                                <div class="card-header">
+                                    <ul class="pagination m-0">
+                                        @if (Model.HasLast(rank.RankId))
+                                        {
+                                            <li class="page-item">
+                                                <a class="page-link tab-link" href="#T_@(rank.RankId-10)" role="tab" aria-controls="T_@(rank.RankId-10)">
+                                                    <!-- Download SVG icon from http://tabler-icons.io/i/chevron-left -->
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><polyline points="15 6 9 12 15 18" /></svg>
+                                                </a>
+                                            </li>
+                                        }
+                                    </ul>
+                                    <h3 class="card-title ms-auto">@rank.RankName</h3>
+                                    <ul class="pagination m-0 ms-auto">
+                                        @if (Model.HasNext(rank.RankId))
+                                        {
+                                            <li class="page-item">
+                                                <a class="page-link tab-link" href="#T_@(rank.RankId+10)" role="tab" aria-controls="T_@(rank.RankId+10)">
+                                                    <!-- Download SVG icon from http://tabler-icons.io/i/chevron-right -->
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><polyline points="9 6 15 12 9 18" /></svg>
+                                                </a>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+
+                                <table class="table card-table table-vcenter">
+                                    <tbody>
+
+                                        @foreach (var advance in rank.RankAdvanceValues)
+                                        {
+                                            <tr>
+                                                <td>@Model.GetValueText(advance.ValueId)</td>
+                                                <td>@advance.Value.ToString("N0")</td>
+                                                <td>@advance.Required.ToString("N0")</td>
+                                                <td class="w-25">
+                                                    <div class="progress progress-xs">
+                                                        <div class="progress-bar bg-primary" style="width: @Model.GetPercent(advance.Value, advance.Required).0%"></div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+
+                                        <tr>
+                                            <td>NuLifeSpan Qualified</td>
+                                            <td>1</td>
+                                            <td>1</td>
+                                            <td class="w-25">
+                                                <div class="progress progress-xs">
+                                                    <div class="progress-bar bg-primary" style="width: 100%"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 col-xl-6">
+                    <div class="row row-cards">
+                        <div class="col-xl-12">
+                            <div class="card card-sm">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <div class="col-auto">
+                                            <span class="bg-blue text-white avatar">
+                                                <!-- Download SVG icon from http://tabler-icons.io/i/currency-dollar -->
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M16.7 8a3 3 0 0 0 -2.7 -2h-4a3 3 0 0 0 0 6h4a3 3 0 0 1 0 6h-4a3 3 0 0 1 -2.7 -2" /><path d="M12 3v3m0 12v3" /></svg>
+                                            </span>
+                                        </div>
+                                        <div class="col">
+                                            <div class="font-weight-medium">
+                                                $@Model.TotalCommissions.ToString("N2")
+                                            </div>
+                                            <div class="text-muted">
+                                                Total Commissions
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-12">
+                            <div class="card card-sm">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <div class="col-auto">
+                                            <span class="bg-green text-white avatar">
+                                                <!-- Download SVG icon from http://tabler-icons.io/i/chart-line -->
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><line x1="4" y1="19" x2="20" y2="19" /><polyline points="4 15 8 9 12 11 16 6 20 10" /></svg>
+                                            </span>
+                                        </div>
+                                        <div class="col">
+                                            <div class="font-weight-medium">
+                                                @Model.DownlineSalesVolume.ToString("N3")
+                                            </div>
+                                            <div class="text-muted">
+                                                Downline Sales Volume
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-12">
+                            <div class="card card-sm">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <div class="col-auto">
+                                            <span class="bg-red text-white avatar">
+                                                <!-- Download SVG icon from http://tabler-icons.io/i/user -->
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><circle cx="12" cy="7" r="4" /><path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /></svg>
+                                            </span>
+                                        </div>
+                                        <div class="col">
+                                            <div class="font-weight-medium">
+                                                @Model.TotalRetail.ToString("N0")
+                                            </div>
+                                            <div class="text-muted">
+                                                Total Retail Customers
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-12">
+                            <div class="card card-sm">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <div class="col-auto">
+                                            <span class="bg-yellow text-white avatar">
+                                                <!-- Download SVG icon from http://tabler-icons.io/i/cash -->
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><rect x="7" y="9" width="14" height="10" rx="2" /><circle cx="14" cy="14" r="2" /><path d="M17 9v-2a2 2 0 0 0 -2 -2h-10a2 2 0 0 0 -2 2v6a2 2 0 0 0 2 2h2" /></svg>
+                                            </span>
+                                        </div>
+                                        <div class="col">
+                                            <div class="font-weight-medium">
+                                                $@Model.Unreleased.ToString("N2")
+                                            </div>
+                                            <div class="text-muted">
+                                                Unreleased Commissions
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-12">
+                    <div class="row row-cards">
+                        <div class="card">
+                            <div class="card-body">
+                                <h3 class="card-title">Bonuses</h3>
+                                <div class="row">
+                                    <table class="table table-borderless">
+                                        <thead>
+                                            <tr>
+                                                <th>Paid Rank</th>
+                                                <th>Bonus</th>
+                                                <th>Commission Date</th>
+                                                <th>Level</th>
+                                                <th>Volume</th>
+                                                <th>Percent</th>
+                                                <th>Amount</th>
+                                                <th>Released</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var bonus in Model.Period.Bonuses)
+                                            {
+                                                <tr>
+                                                    <td>@bonus.Rank</td>
+                                                    <td>@bonus.BonusTitle</td>
+                                                    <td>@bonus.CommissionDate.ToShortDateString()</td>
+                                                    <td>@bonus.Level</td>
+                                                    <td>@bonus.Volume.ToString("N3")</td>
+                                                    <td>@bonus.Percent.ToString("N")%</td>
+                                                    <td>$@bonus.Amount.ToString("N2")</td>
+                                                    <td>
+                                                        @if (bonus.Released != 0)
+                                                        {
+                                                            <span class="status-icon text-success">$@bonus.Released.ToString("N2")</span>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-8">
+                    <div class="row row-cards">
+                        <div class="card">
+                            <div class="card-body">
+                                <h3 class="card-title">Sources</h3>
+                                <div class="row">
+                                    <table class="table table-borderless">
+                                        <thead>
+                                            <tr>
+                                                <th>SourceGroupId</th>
+                                                <th>Source Date</th>
+                                                <th>Value</th>
+                                                <th>External Id</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var source in Model.Period.Sources)
+                                            {
+                                                <tr>
+                                                    <td>@source.SourceGroupId</td>
+                                                    <td>@source.Date.ToShortDateString()</td>
+                                                    <td>@source.Value</td>
+                                                    <td>@source.ExternalId</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-4">
+                    <div class="row row-cards">
+                        <div class="card">
+                            <div class="card-body">
+                                <h3 class="card-title">Commission Values</h3>
+                                <div class="row">
+                                    <table class="table table-borderless">
+                                        <thead>
+                                            <tr>
+                                                <th>Id</th>
+                                                <th>Value</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var value in Model.Period.CommissionValues)
+                                            {
+                                                <tr>
+                                                    <td>@value.ValueId</td>
+                                                    <td>@value.Value</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts
+{
+    <script>
+        $('.tab-link').on('click', function (event) {
+            // Prevent url change
+            event.preventDefault();
+
+            // `this` is the clicked <a> tag
+            var target = $('[data-toggle="tab"][href="' + this.hash + '"]');
+
+            // opening tab
+            target.trigger('click');
+            // scrolling into view
+            target[0].scrollIntoView(true);
+        });
+    </script>
+}

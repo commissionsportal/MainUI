@@ -1,0 +1,123 @@
+﻿@model BonusSummaryViewModel
+@{
+    ViewData["Title"] = "CommssionBonusSummary";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Title
+{
+    <div class="col">
+        <!-- Page pre-title -->
+        <div class="page-pretitle">
+            @Model.Period.BeginString - @Model.Period.EndString
+        </div>
+        <h2 class="page-title">
+            @Model.BonusGroupValue Bonus Summary
+        </h2>
+    </div>
+}
+
+<div class="container-xl">
+    <div class="row row-cards row-deck">
+        <div class="col-12">
+            <div class="card">
+                <div class="table-responsive">
+                    <table class="table card-table table-vcenter text-nowrap datatable">
+                        <thead>
+                            <tr>
+                                <th class="text-center w-1"><i class="icon-people"></i></th>
+                                <th>Customer</th>
+                                <th>Paid Rank</th>
+                                <th>Bonus</th>
+                                <th>Commission Date</th>
+                                <th>Level</th>
+                                <th>Volume</th>
+                                <th>Percent</th>
+                                <th>Amount</th>
+                                <th>Released</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var bonus in Model.Bonuses)
+                            {
+                            <tr>
+                                <td class="text-center">
+                                    <div class="avatar d-block" style="background-image: url('@bonus.Customer.ProfileImage')" data-toggle="tooltip" title="">
+                                        <span class="avatar-status bg-@bonus.Customer.StatusColor"></span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div><a class="text-reset" asp-controller="Customers" asp-action="CustomerDetail" asp-route-id="@bonus.NodeId" asp-route-templateId="@Model.TemplateId" asp-route-periodId="@Model.Period.Id" >@bonus.Customer.FullName</a></div>
+                                    @if (bonus.Customer.EnrollDate.HasValue)
+                                    {
+                                        <div class="small text-muted">
+                                            Registered: @bonus.Customer.EnrollDate.Value.ToString("MMM d, yyyy")
+                                        </div>
+                                    }
+                                    </td>
+                                    <td>@bonus.Rank</td>
+                                    <td>@bonus.BonusTitle</td>
+                                    <td>@bonus.CommissionDate.ToShortDateString()</td>
+                                    <td>@bonus.Level</td>
+                                    <td>@bonus.Volume.ToString("N3")</td>
+                                    <td>@bonus.Percent.ToString("N")%</td>
+                                    <td>$@bonus.Amount.ToString("N2")</td>
+                                    <td>
+                                    @if (bonus.Released != 0)
+                                    {
+                                        <span class="status-icon text-success">$@bonus.Released.ToString("N2")</span>
+                                    }
+                                </td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <script>
+                        require(['datatables.net-buttons', 'jquery', 'db-flash', 'db-jszip', 'db-pdfmake', 'db-vfs_fonts', 'db-html5', 'db-print'], function (datatable, $) {
+                            $('.datatable').DataTable({
+                                dom: 'Bfrtip',
+                                "ordering": false,
+                                lengthMenu: [
+                                    [10, 25, 50],
+                                    ['10 rows', '25 rows', '50 rows']
+                                ],
+                                buttons: [
+                                    {
+                                        extend: 'pageLength',
+                                        className: 'btn btn-secondary dropdown-toggle',
+                                    },
+                                    {
+                                        extend: 'csv',
+                                        text: '<i class="fe fe-download"></i>',
+                                        className: 'btn btn-secondary',
+                                        titleAttr: 'Download CSV',
+                                        exportOptions: {
+                                            columns: 'th:not(.no-export)'
+                                        }
+                                    },
+                                    {
+                                        extend: 'excelHtml5',
+                                        text: '<i class="fa fa-file-excel-o"></i>',
+                                        className: 'btn btn-secondary',
+                                        titleAttr: 'Excel',
+                                        exportOptions: {
+                                            columns: 'th:not(.no-export)'
+                                        }
+                                    },
+                                    {
+                                        extend: 'print',
+                                        text: '<i class="fe fe-printer"></i>',
+                                        className: 'btn btn-secondary',
+                                        titleAttr: 'Print',
+                                        exportOptions: {
+                                            columns: 'th:not(.no-export)'
+                                        }
+                                    }]
+                            });
+                        });
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

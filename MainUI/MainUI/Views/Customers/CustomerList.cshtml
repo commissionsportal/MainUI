@@ -1,0 +1,124 @@
+﻿@model CustomerListViewModel
+@{
+    ViewData["Title"] = "CustomerList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Title
+{ 
+    <div class="col">
+        <h2 class="page-title">
+            Customers
+        </h2>
+    </div>
+}
+
+
+<div class="container-xl">
+    <div class="row row-cards">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body border-bottom py-3">
+                    <div class="d-flex">
+                        <div class="ms-auto text-muted">
+                            Search:
+                            <div class="ms-2 d-inline-block">
+                                <input type="text" class="form-control form-control-sm" aria-label="Search invoice">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table card-table table-vcenter text-nowrap datatable">
+                        <thead>
+                            <tr>
+                                <th class="text-center w-1"><i class="icon-people"></i></th>
+                                <th>User</th>
+                                <th>Customer Id</th>
+                                <th>Customer Type</th>
+                                <th>Status</th>
+                                <th>Phone number</th>
+                                <th>Email Address</th>
+                                <th class="text-center"><i class="icon-settings"></i></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var customer in Model.Customers)
+                            {
+                                <tr>
+                                    <td class="text-center">
+                                        <div class="avatar d-block" style="background-image: url('@customer.ProfileImage')" data-toggle="tooltip" title="" data-original-title="@customer.Status">
+                                            <span class="avatar-status bg-@customer.StatusColor"></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div><a class="text-reset" asp-controller="Customers" asp-action="CustomerDetail" asp-route-id="@customer.Id">@customer.FullName</a></div>
+                                        @if (customer.EnrollDate.HasValue)
+                                        {
+                                            <div class="small text-muted">
+                                                Registered: @customer.EnrollDate.Value.ToString("MMM d, yyyy")
+                                            </div>
+                                        }
+                                    </td>
+                                    <td>
+                                        @customer.Id
+                                    </td>
+                                    <td>
+                                        @customer.CustomerTypeText
+                                    </td>
+                                    <td>
+                                        <span class="status-icon bg-@customer.StatusColor"></span> @customer.Status
+                                    </td>
+                                    <td>
+                                        <div>@customer.MainPhone</div>
+                                    </td>
+                                    <td>
+                                        @customer.EmailAddress
+                                    </td>
+                                    <td class="text-center">
+                                        @*<div class="item-action dropdown">
+                        <a href="javascript:void(0)" data-toggle="dropdown" class="icon"><i class="fe fe-more-vertical"></i></a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a href="javascript:void(0)" class="dropdown-item"><i class="dropdown-icon fe fe-tag"></i> Action </a>
+                            <a href="javascript:void(0)" class="dropdown-item"><i class="dropdown-icon fe fe-edit-2"></i> Another action </a>
+                            <a href="javascript:void(0)" class="dropdown-item"><i class="dropdown-icon fe fe-message-square"></i> Something else here</a>
+                            <div class="dropdown-divider"></div>
+                            <a href="javascript:void(0)" class="dropdown-item"><i class="dropdown-icon fe fe-link"></i> Separated link</a>
+                        </div>
+                    </div>*@
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer d-flex align-items-center">
+                    <p class="m-0 text-muted">Showing <span>@Model.ShowingFrom</span> to <span>@Model.ShowingTo</span> of <span>@Model.TotalCustomers</span> entries</p>
+                    <ul class="pagination m-0 ms-auto">
+                        <li class="page-item @Model.PrevDisabled )">
+                            <a class="page-link" href="/Customers/CustomerList/@Model.PrevPage" tabindex="-1" aria-disabled="true">
+                                <!-- Download SVG icon from http://tabler-icons.io/i/chevron-left -->
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><polyline points="15 6 9 12 15 18" /></svg>
+                                prev
+                            </a>
+                        </li>
+
+                        @foreach(var pageNumber in Model.DisplayPages)
+                        {
+                            <li class="page-item @Model.Active(pageNumber)"><a class="page-link" href="/Customers/CustomerList/@pageNumber">@pageNumber</a></li>
+                        }
+
+                        <li class="page-item @Model.NextDisabled">
+                            <a class="page-link" href="/Customers/CustomerList/@Model.NextPage" aria-disabled="true">
+                                next <!-- Download SVG icon from http://tabler-icons.io/i/chevron-right -->
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><polyline points="9 6 15 12 9 18" /></svg>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

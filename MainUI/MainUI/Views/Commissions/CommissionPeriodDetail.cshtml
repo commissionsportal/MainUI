@@ -1,0 +1,890 @@
+﻿@model MainUI.Models.CommissionPeriodDetailViewModel
+
+@{
+    ViewData["Title"] = "CommissionRunDetail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Title
+{
+    <div class="col">
+        <!-- Page pre-title -->
+        <div class="page-pretitle">
+            @Model.Period.BeginString - @Model.Period.EndString
+        </div>
+        <h2 class="page-title">
+            Commission Period Summary
+        </h2>
+    </div>
+}
+
+<div class="container-xl">
+    <div class="row row-deck row-cards">
+        <div class="col-sm-6 col-lg-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="subheader">Commissions total</div>
+                    </div>
+                    <div class="d-flex align-items-baseline">
+                        <div class="h1 mb-0 me-2">$@Model.TotalCommissions.ToString("N0")</div>
+                        <div class="me-auto">
+                            <span class="text-@Model.TotalCommissionTrendH.TextColor d-inline-flex align-items-center lh-1">
+                                @Model.TotalCommissionTrend% 
+                                @Html.Raw(Model.TotalCommissionTrendH.TrendSvg)
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div id="chart-commissions" class="chart-sm"></div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="subheader">Customers Paid</div>
+                    </div>
+                    <div class="h1 mb-3">@Model.CustomersPaid.ToString("N0")</div>
+                    <div class="d-flex mb-2">
+                        <div>Customer earning rate</div>
+                        <div class="ms-auto">
+                            <span class="text-@Model.CustomersPaidTrendH.TextColor d-inline-flex align-items-center lh-1">
+                                @Model.CustomersPaidTrend%
+                                @Html.Raw(Model.CustomersPaidTrendH.TrendSvg)
+                            </span>
+                        </div>
+                    </div>
+                    <div class="progress progress-sm">
+                        <div class="progress-bar bg-blue" style="width: @Model.CustomersPaidPercent%" role="progressbar" aria-valuenow="@Model.CustomersPaidPercent" aria-valuemin="0" aria-valuemax="100">
+                            <span class="visually-hidden">@Model.CustomersPaidPercent% Complete</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="subheader">First Time Volume</div>
+                        <div class="ms-auto lh-1">
+                            <a class="link-secondary text-muted" asp-controller="CommissionsController" asp-action="NewVolumeDetail" asp-route-templateId="@Model.Period.CompensationPlanId" asp-route-periodId="@Model.Period.Id">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-external-link" style="width: 16px;" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                    <path d="M11 7h-5a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-5"></path>
+                                    <line x1="10" y1="14" x2="20" y2="4"></line>
+                                    <polyline points="15 4 20 4 20 9"></polyline>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-baseline">
+                        <div class="h1 mb-3 me-2">@Model.TotalFtVolume.ToString("N0")</div>
+                        <div class="me-auto">
+                            <span class="text-@Model.TotalFtVolumeTrendH.TextColor d-inline-flex align-items-center lh-1">
+                                @Model.TotalFtVolumeTrend%
+                                @Html.Raw(Model.TotalFtVolumeTrendH.TrendSvg)
+                            </span>
+                        </div>
+                    </div>
+                    <div id="chart-new-volume" class="chart-sm"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="subheader">Total volume</div>
+                    </div>
+                    <div class="d-flex align-items-baseline">
+                        <div class="h1 mb-3 me-2">@Model.TotalVolume.ToString("N0")</div>
+                        <div class="me-auto">
+                            <span class="text-@Model.TotalVolumeTrendH.TextColor d-inline-flex align-items-center lh-1">
+                                @Model.TotalVolumeTrend% 
+                                @Html.Raw(Model.TotalVolumeTrendH.TrendSvg)
+                            </span>
+                        </div>
+                    </div>
+                    <div id="chart-total-volume" class="chart-sm"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="row row-cards">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header border-0">
+                            <h3 class="card-title" title="Commission volume by day">Volume summary</h3>
+                            <div class="card-actions">
+                                <a class="link-secondary" asp-controller="CommissionsController" asp-action="VolumeDetailByDay" asp-route-templateId="@Model.Period.CompensationPlanId" asp-route-periodId="@Model.Period.Id">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-external-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                        <path d="M11 7h-5a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-5"></path>
+                                        <line x1="10" y1="14" x2="20" y2="4"></line>
+                                        <polyline points="15 4 20 4 20 9"></polyline>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div id="chart-volume-byday" class="chart-lg"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <p class="mb-3">Customers Paid <strong>@Model.CustomersPaid.ToString("N0") </strong>of @Model.TotalCustomers.ToString("N0")</p>
+                            <div class="progress progress-separated mb-3">
+                                <div class="progress-bar bg-primary" role="progressbar" style="width: @Model.CustomerPaid12P%"></div>
+                                <div class="progress-bar bg-info" role="progressbar" style="width: @Model.CustomerPaid6P%"></div>
+                                <div class="progress-bar bg-success" role="progressbar" style="width: @Model.CustomerPaidTMP%"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-auto d-flex align-items-center pe-2">
+                                    <span class="legend me-2 bg-primary"></span>
+                                    <span>12 Periods</span>
+                                    <span class="d-none d-md-inline d-lg-none d-xxl-inline ms-2 text-muted">@Model.CustomerPaid12.ToString("N0")</span>
+                                </div>
+                                <div class="col-auto d-flex align-items-center px-2">
+                                    <span class="legend me-2 bg-info"></span>
+                                    <span>6 Periods</span>
+                                    <span class="d-none d-md-inline d-lg-none d-xxl-inline ms-2 text-muted">@Model.CustomerPaid6.ToString("N0")</span>
+                                </div>
+                                <div class="col-auto d-flex align-items-center px-2">
+                                    <span class="legend me-2 bg-success"></span>
+                                    <span>New </span>
+                                    <span class="d-none d-md-inline d-lg-none d-xxl-inline ms-2 text-muted">@Model.CustomerPaidTM.ToString("N0")</span>
+                                </div>
+                                <div class="col-auto d-flex align-items-center ps-2">
+                                    <span class="legend me-2"></span>
+                                    <span>Unpaid</span>
+                                    <span class="d-none d-md-inline d-lg-none d-xxl-inline ms-2 text-muted">@Model.CustomerUnPaid.ToString("N0")</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card" style="height: calc(27rem + 10px)">
+                <div class="card-header border-0">
+                    <div class="card-title">Commissions Earned</div>
+                </div>
+                <div class="position-relative">
+                    <div class="position-absolute top-0 left-0 px-3 mt-1 w-50">
+                        <div class="row g-2">
+                            <div class="col-auto">
+                                <div class="chart-sparkline chart-sparkline-square" id="sparkline-activity"></div>
+                            </div>
+                            <div class="col">
+                                <div>Today's Earning: $@Model.TodayCommissionTotal.ToString("N0")</div>
+                                <div class="text-muted">
+                                    @Html.Raw(Model.TodayCommissionTotalIncTendH.TrendSvg)
+                                    @Model.TodayCommissionTotalIncPercentString than yesterday
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="chart-commission-earnedbyday"></div>
+                </div>
+                <div class="card-table table-responsive">
+                    <table class="table table-vcenter">
+                        <thead>
+                            <tr>
+                                <th>Bonus</th>
+                                <th>Count</th>
+                                <th>Paid Amount</th>
+                                <th>Percent</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var bonus in Model.BonusesByTitle)
+                            {
+                                <tr>
+                                    <td>@bonus.Description</td>
+                                    <td><a asp-area="" asp-controller="Commissions" asp-action="CommssionBonusSummary" asp-route-templateId="@Model.Period.CompensationPlanId" asp-route-periodId="@Model.Period.Id" asp-route-group="@bonus.Group" asp-route-groupValue="@bonus.Description">@bonus.PaidCount</a></td>
+                                    <td>$@bonus.PaidAmount.ToString("N2")</td>
+                                    <td class="text-center">
+                                        <div class="chart-circle-value">@bonus.PercentDisplay(Model.TotalCommissions)%</div>
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 col-lg-7">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Rank Summary</h3>
+                </div>
+                <table class="table card-table table-vcenter">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Count</th>
+                            <th>Paid Amount</th>
+                            <th>Percent</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var bonus in Model.BonusesByRank.OrderBy(x => x.Description))
+                        {
+                            <tr>
+                                <td>@bonus.Description</td>
+                                <td><a asp-area="" asp-controller="Commissions" asp-action="CommssionBonusSummary" asp-route-templateId="@Model.Period.CompensationPlanId" asp-route-periodId="@Model.Period.Id" asp-route-group="@bonus.Group" asp-route-groupValue="@bonus.Description">@bonus.PaidCount</a></td>
+                                <td>$@bonus.PaidAmount.ToString("N2")</td>
+                                <td class="text-center">
+                                    <div class="progress-bar bg-primary" style="width: @bonus.PercentDisplay(Model.TotalCommissions)%"></div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-12 col-lg-5">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Tasks</h3>
+                </div>
+                <div class="table-responsive">
+                    <table class="table card-table table-vcenter">
+                        @*<tr>
+            <td class="w-1 pe-0">
+                <input type="checkbox" class="form-check-input m-0 align-middle" aria-label="Select task" checked>
+            </td>
+            <td class="w-100">
+                <a href="#" class="text-reset">Extend the data model.</a>
+            </td>
+            <td class="text-nowrap text-muted">-->
+                <!-- Download SVG icon from http://tabler-icons.io/i/calendar -->
+                <!--<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><rect x="4" y="5" width="16" height="16" rx="2" /><line x1="16" y1="3" x2="16" y2="7" /><line x1="8" y1="3" x2="8" y2="7" /><line x1="4" y1="11" x2="20" y2="11" /><line x1="11" y1="15" x2="12" y2="15" /><line x1="12" y1="15" x2="12" y2="18" /></svg>
+                January 01, 2019
+            </td>
+            <td class="text-nowrap">
+                <a href="#" class="text-muted">-->
+                    <!-- Download SVG icon from http://tabler-icons.io/i/check -->
+                    <!--<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M5 12l5 5l10 -10" /></svg>
+                    2/7
+                </a>
+            </td>
+            <td class="text-nowrap">
+                <a href="#" class="text-muted">-->
+                    <!-- Download SVG icon from http://tabler-icons.io/i/message -->
+                    <!--<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M4 21v-13a3 3 0 0 1 3 -3h10a3 3 0 0 1 3 3v6a3 3 0 0 1 -3 3h-9l-4 4" /><line x1="8" y1="9" x2="16" y2="9" /><line x1="8" y1="13" x2="14" y2="13" /></svg>
+                    3
+                </a>
+            </td>
+            <td>
+                <span class="avatar avatar-sm" style="background-image: url(./static/avatars/000m.jpg)"></span>
+            </td>
+        </tr>
+        <tr>
+            <td class="w-1 pe-0">
+                <input type="checkbox" class="form-check-input m-0 align-middle" aria-label="Select task">
+            </td>
+            <td class="w-100">
+                <a href="#" class="text-reset">Verify the event flow.</a>
+            </td>
+            <td class="text-nowrap text-muted">-->
+                <!-- Download SVG icon from http://tabler-icons.io/i/calendar -->
+                <!--<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><rect x="4" y="5" width="16" height="16" rx="2" /><line x1="16" y1="3" x2="16" y2="7" /><line x1="8" y1="3" x2="8" y2="7" /><line x1="4" y1="11" x2="20" y2="11" /><line x1="11" y1="15" x2="12" y2="15" /><line x1="12" y1="15" x2="12" y2="18" /></svg>
+                January 01, 2019
+            </td>
+            <td class="text-nowrap">
+                <a href="#" class="text-muted">-->
+                    <!-- Download SVG icon from http://tabler-icons.io/i/check -->
+                    <!--<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M5 12l5 5l10 -10" /></svg>
+                    3/10
+                </a>
+            </td>
+            <td class="text-nowrap">
+                <a href="#" class="text-muted">-->
+                    <!-- Download SVG icon from http://tabler-icons.io/i/message -->
+                    <!--<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M4 21v-13a3 3 0 0 1 3 -3h10a3 3 0 0 1 3 3v6a3 3 0 0 1 -3 3h-9l-4 4" /><line x1="8" y1="9" x2="16" y2="9" /><line x1="8" y1="13" x2="14" y2="13" /></svg>
+                    6
+                </a>
+            </td>
+            <td>
+                <span class="avatar avatar-sm">JL</span>
+            </td>
+        </tr>
+        <tr>
+            <td class="w-1 pe-0">
+                <input type="checkbox" class="form-check-input m-0 align-middle" aria-label="Select task">
+            </td>
+            <td class="w-100">
+                <a href="#" class="text-reset">Database backup and maintenance</a>
+            </td>
+            <td class="text-nowrap text-muted">-->
+                <!-- Download SVG icon from http://tabler-icons.io/i/calendar -->
+                <!--<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><rect x="4" y="5" width="16" height="16" rx="2" /><line x1="16" y1="3" x2="16" y2="7" /><line x1="8" y1="3" x2="8" y2="7" /><line x1="4" y1="11" x2="20" y2="11" /><line x1="11" y1="15" x2="12" y2="15" /><line x1="12" y1="15" x2="12" y2="18" /></svg>
+                January 01, 2019
+            </td>
+            <td class="text-nowrap">
+                <a href="#" class="text-muted">-->
+                    <!-- Download SVG icon from http://tabler-icons.io/i/check -->
+                    <!--<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M5 12l5 5l10 -10" /></svg>
+                    0/6
+                </a>
+            </td>
+            <td class="text-nowrap">
+                <a href="#" class="text-muted">-->
+                    <!-- Download SVG icon from http://tabler-icons.io/i/message -->
+                    <!--<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M4 21v-13a3 3 0 0 1 3 -3h10a3 3 0 0 1 3 3v6a3 3 0 0 1 -3 3h-9l-4 4" /><line x1="8" y1="9" x2="16" y2="9" /><line x1="8" y1="13" x2="14" y2="13" /></svg>
+                    1
+                </a>
+            </td>
+            <td>
+                <span class="avatar avatar-sm" style="background-image: url(./static/avatars/002m.jpg)"></span>
+            </td>
+        </tr>
+        <tr>
+            <td class="w-1 pe-0">
+                <input type="checkbox" class="form-check-input m-0 align-middle" aria-label="Select task" checked>
+            </td>
+            <td class="w-100">
+                <a href="#" class="text-reset">Identify the implementation team.</a>
+            </td>
+            <td class="text-nowrap text-muted">-->
+                <!-- Download SVG icon from http://tabler-icons.io/i/calendar -->
+                <!--<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><rect x="4" y="5" width="16" height="16" rx="2" /><line x1="16" y1="3" x2="16" y2="7" /><line x1="8" y1="3" x2="8" y2="7" /><line x1="4" y1="11" x2="20" y2="11" /><line x1="11" y1="15" x2="12" y2="15" /><line x1="12" y1="15" x2="12" y2="18" /></svg>
+                January 01, 2019
+            </td>
+            <td class="text-nowrap">
+                <a href="#" class="text-muted">-->
+                    <!-- Download SVG icon from http://tabler-icons.io/i/check -->
+                    <!--<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M5 12l5 5l10 -10" /></svg>
+                    6/10
+                </a>
+            </td>
+            <td class="text-nowrap">
+                <a href="#" class="text-muted">-->
+                    <!-- Download SVG icon from http://tabler-icons.io/i/message -->
+                    <!--<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M4 21v-13a3 3 0 0 1 3 -3h10a3 3 0 0 1 3 3v6a3 3 0 0 1 -3 3h-9l-4 4" /><line x1="8" y1="9" x2="16" y2="9" /><line x1="8" y1="13" x2="14" y2="13" /></svg>
+                    12
+                </a>
+            </td>
+            <td>
+                <span class="avatar avatar-sm" style="background-image: url(./static/avatars/003m.jpg)"></span>
+            </td>
+        </tr>
+        <tr>
+            <td class="w-1 pe-0">
+                <input type="checkbox" class="form-check-input m-0 align-middle" aria-label="Select task">
+            </td>
+            <td class="w-100">
+                <a href="#" class="text-reset">Define users and workflow</a>
+            </td>
+            <td class="text-nowrap text-muted">-->
+                <!-- Download SVG icon from http://tabler-icons.io/i/calendar -->
+                <!--<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><rect x="4" y="5" width="16" height="16" rx="2" /><line x1="16" y1="3" x2="16" y2="7" /><line x1="8" y1="3" x2="8" y2="7" /><line x1="4" y1="11" x2="20" y2="11" /><line x1="11" y1="15" x2="12" y2="15" /><line x1="12" y1="15" x2="12" y2="18" /></svg>
+                January 01, 2019
+            </td>
+            <td class="text-nowrap">
+                <a href="#" class="text-muted">-->
+                    <!-- Download SVG icon from http://tabler-icons.io/i/check -->
+                    <!--<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M5 12l5 5l10 -10" /></svg>
+                    3/7
+                </a>
+            </td>
+            <td class="text-nowrap">
+                <a href="#" class="text-muted">-->
+                    <!-- Download SVG icon from http://tabler-icons.io/i/message -->
+                    <!--<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M4 21v-13a3 3 0 0 1 3 -3h10a3 3 0 0 1 3 3v6a3 3 0 0 1 -3 3h-9l-4 4" /><line x1="8" y1="9" x2="16" y2="9" /><line x1="8" y1="13" x2="14" y2="13" /></svg>
+                    5
+                </a>
+            </td>
+            <td>
+                <span class="avatar avatar-sm" style="background-image: url(./static/avatars/000f.jpg)"></span>
+            </td>
+        </tr>
+        <tr>
+            <td class="w-1 pe-0">
+                <input type="checkbox" class="form-check-input m-0 align-middle" aria-label="Select task" checked>
+            </td>
+            <td class="w-100">
+                <a href="#" class="text-reset">Check Pull Requests</a>
+            </td>
+            <td class="text-nowrap text-muted">-->
+                <!-- Download SVG icon from http://tabler-icons.io/i/calendar -->
+                <!--<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><rect x="4" y="5" width="16" height="16" rx="2" /><line x1="16" y1="3" x2="16" y2="7" /><line x1="8" y1="3" x2="8" y2="7" /><line x1="4" y1="11" x2="20" y2="11" /><line x1="11" y1="15" x2="12" y2="15" /><line x1="12" y1="15" x2="12" y2="18" /></svg>
+                January 01, 2019
+            </td>
+            <td class="text-nowrap">
+                <a href="#" class="text-muted">-->
+                    <!-- Download SVG icon from http://tabler-icons.io/i/check -->
+                    <!--<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M5 12l5 5l10 -10" /></svg>
+                    2/9
+                </a>
+            </td>
+            <td class="text-nowrap">
+                <a href="#" class="text-muted">-->
+                    <!-- Download SVG icon from http://tabler-icons.io/i/message -->
+                    <!--<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M4 21v-13a3 3 0 0 1 3 -3h10a3 3 0 0 1 3 3v6a3 3 0 0 1 -3 3h-9l-4 4" /><line x1="8" y1="9" x2="16" y2="9" /><line x1="8" y1="13" x2="14" y2="13" /></svg>
+                    3
+                </a>
+            </td>
+            <td>
+                <span class="avatar avatar-sm" style="background-image: url(./static/avatars/001f.jpg)"></span>
+            </td>
+        </tr>*@
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Leaders and Top Earners</h3>
+                    @*<div class="card-actions">
+                        <a class="link-secondary" asp-controller="Commissions" asp-action="CommssionBonusSummary" asp-route-templateId="@Model.Period.CompensationPlanId" asp-route-periodId="@Model.Period.Id">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-external-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <path d="M11 7h-5a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-5"></path>
+                                <line x1="10" y1="14" x2="20" y2="4"></line>
+                                <polyline points="15 4 20 4 20 9"></polyline>
+                            </svg>
+                        </a>
+                    </div>*@
+                </div>
+                <div class="table-responsive">
+                    <table class="table card-table table-vcenter text-nowrap datatable">
+                        <thead>
+                            <tr>
+                                <th class="text-center w-1"><i class="icon-people"></i></th>
+                                <th>Customer</th>
+                                <th>Customer Id</th>
+                                <th>Customer Status</th>
+                                <th>Rank</th>
+                                <th>Volume</th>
+                                <th>Commissions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (var bonus in Model.TopEarners)
+                            {
+                                <tr>
+                                    <td class="text-center">
+                                        <div class="avatar d-block" style="background-image: url('@bonus.Customer.ProfileImage')" data-toggle="tooltip" title="">
+                                            <span class="avatar-status bg-@bonus.Customer.StatusColor"></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div><a class="text-reset" asp-controller="Customers" asp-action="CustomerDetail" asp-route-id="@bonus.NodeId" asp-route-templateId="@Model.Period.CompensationPlanId" asp-route-periodId="@Model.Period.Id">@bonus.Customer.FullName</a></div>
+                                        @if (bonus.Customer.EnrollDate.HasValue)
+                                        {
+                                            <div class="small text-muted">
+                                                Registered: @bonus.Customer.EnrollDate.Value.ToString("MMM d, yyyy")
+                                            </div>
+                                        }
+                                    </td>
+                                    <td>
+                                        @bonus.NodeId
+                                    </td>
+                                    <td>
+                                        @*<span class="badge bg-@bonus.Customer.StatusColor me-1"></span>*@ @bonus.Customer.Status
+                                    </td>
+                                    <td>
+                                        @bonus.Rank
+                                    </td>
+                                    <td>
+                                        @bonus.Volume.ToString("N2")
+                                    </td>
+                                    <td>$@bonus.Amount.ToString("N2")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <a asp-controller="Commissions" asp-action="CommssionBonusSummary" asp-route-templateId="@Model.Period.CompensationPlanId" asp-route-periodId="@Model.Period.Id">
+                                More Earners
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // @@formatter:off
+        document.addEventListener("DOMContentLoaded", function () {
+            window.ApexCharts && (new ApexCharts(document.getElementById('chart-commissions'), {
+                chart: {
+                    type: "area",
+                    fontFamily: 'inherit',
+                    height: 40.0,
+                    sparkline: {
+                        enabled: true
+                    },
+                    animations: {
+                        enabled: false
+                    },
+                },
+                dataLabels: {
+                    enabled: false,
+                },
+                fill: {
+                    opacity: .16,
+                    type: 'solid'
+                },
+                stroke: {
+                    width: 2,
+                    lineCap: "round",
+                    curve: "smooth",
+                },
+                series: [{
+                    name: "@Model.CommissionHistory.Title",
+                    data: [@Model.CommissionHistory.ToValueString()]
+                }],
+                grid: {
+                    strokeDashArray: 4,
+                },
+                xaxis: {
+                    labels: {
+                        padding: 0,
+                    },
+                    tooltip: {
+                        enabled: false
+                    },
+                    axisBorder: {
+                        show: false,
+                    },
+                },
+                yaxis: {
+                    labels: {
+                        padding: 4
+                    },
+                },
+                labels: [
+                  @Html.Raw(Model.CommissionHistory.ToTitleString())
+                ],
+                colors: ["#206bc4"],
+                legend: {
+                    show: false,
+                },
+            })).render();
+        });
+        // @@formatter:on
+    </script>
+    <script>
+        // @@formatter:off
+        document.addEventListener("DOMContentLoaded", function () {
+            window.ApexCharts && (new ApexCharts(document.getElementById('chart-new-volume'), {
+                chart: {
+                    type: "line",
+                    fontFamily: 'inherit',
+                    height: 40.0,
+                    sparkline: {
+                        enabled: true
+                    },
+                    animations: {
+                        enabled: false
+                    },
+                },
+                fill: {
+                    opacity: 1,
+                },
+                stroke: {
+                    width: [2, 1],
+                    dashArray: [0, 3],
+                    lineCap: "round",
+                    curve: "smooth",
+                },
+                series: [{
+                    name: "@Model.TotalFtVolumeHistory1.Title",
+                    data: [@Model.TotalFtVolumeHistory1.ToValueString()]
+                }, {
+                    name: "@Model.TotalFtVolumeHistory2.Title",
+                    data: [@Model.TotalFtVolumeHistory2.ToValueString()]
+                }],
+                grid: {
+                    strokeDashArray: 4,
+                },
+                xaxis: {
+                    labels: {
+                        padding: 0,
+                    },
+                    tooltip: {
+                        enabled: false
+                    },
+                    type: 'datetime',
+                },
+                yaxis: {
+                    labels: {
+                        padding: 4
+                    },
+                },
+                labels: [
+                    @Html.Raw(Model.TotalFtVolumeHistory1.ToTitleString())
+                ],
+                colors: ["#206bc4", "#a8aeb7"],
+                legend: {
+                    show: false,
+                },
+            })).render();
+        });
+        // @@formatter:on
+    </script>
+    <script>
+        // @@formatter:off
+        document.addEventListener("DOMContentLoaded", function () {
+            window.ApexCharts && (new ApexCharts(document.getElementById('chart-total-volume'), {
+                chart: {
+                    type: "line",
+                    fontFamily: 'inherit',
+                    height: 40.0,
+                    sparkline: {
+                        enabled: true
+                    },
+                    animations: {
+                        enabled: false
+                    },
+                },
+                fill: {
+                    opacity: 1,
+                },
+                stroke: {
+                    width: [2, 1],
+                    dashArray: [0, 3],
+                    lineCap: "round",
+                    curve: "smooth",
+                },
+                series: [{
+                    name: "@Model.TotalVolumeHistory.Title",
+                    data: [@Model.TotalVolumeHistory.ToValueString()]
+                }],
+                grid: {
+                    strokeDashArray: 4,
+                },
+                xaxis: {
+                    labels: {
+                        padding: 0,
+                    },
+                    tooltip: {
+                        enabled: false
+                    },
+                    axisBorder: {
+                        show: false,
+                    },
+                },
+                yaxis: {
+                    labels: {
+                        padding: 4
+                    },
+                },
+                labels: [
+                    @Html.Raw(Model.TotalVolumeHistory.ToTitleString())
+                ],
+                colors: ["#206bc4"],
+                legend: {
+                    show: false,
+                },
+            })).render();
+        });
+        // @@formatter:on
+    </script>
+    <script>
+        // @@formatter:off
+        document.addEventListener("DOMContentLoaded", function () {
+            window.ApexCharts && (new ApexCharts(document.getElementById('chart-volume-byday'), {
+                chart: {
+                    type: "bar",
+                    fontFamily: 'inherit',
+                    height: 240,
+                    parentHeightOffset: 0,
+                    toolbar: {
+                        show: false,
+                    },
+                    animations: {
+                        enabled: false
+                    },
+                    stacked: true,
+                },
+                plotOptions: {
+                    bar: {
+                        columnWidth: '50%',
+                    }
+                },
+                dataLabels: {
+                    enabled: false,
+                },
+                fill: {
+                    opacity: 1,
+                },
+                series: [{
+                    name: "@Model.DailyVolumeHistoryW.Title",
+                    data: [@Model.DailyVolumeHistoryW.ToValueString()]
+                }, {
+                    name: "@Model.DailyVolumeHistoryV.Title",
+                    data: [@Model.DailyVolumeHistoryV.ToValueString()]
+                }, {
+                    name: "@Model.DailyVolumeHistoryR.Title",
+                    data: [@Model.DailyVolumeHistoryR.ToValueString()]
+                }],
+                grid: {
+                    padding: {
+                        top: -20,
+                        right: 0,
+                        left: -4,
+                        bottom: -4
+                    },
+                    strokeDashArray: 4,
+                    xaxis: {
+                        lines: {
+                            show: true
+                        }
+                    },
+                },
+                xaxis: {
+                    labels: {
+                        padding: 0,
+                    },
+                    tooltip: {
+                        enabled: false
+                    },
+                    axisBorder: {
+                        show: false,
+                    },
+                    type: 'datetime',
+                },
+                yaxis: {
+                    labels: {
+                        padding: 4
+                    },
+                },
+                labels: [
+                    @Html.Raw(Model.DailyVolumeHistoryW.ToTitleString())
+                ],
+                colors: ["#206bc4", "#79a6dc", "#bfe399"],
+                legend: {
+                    show: false,
+                },
+            })).render();
+        });
+        // @@formatter:on
+    </script>
+    <script>
+        // @@formatter:off
+        document.addEventListener("DOMContentLoaded", function () {
+            window.ApexCharts && (new ApexCharts(document.getElementById('sparkline-activity'), {
+                chart: {
+                    type: "radialBar",
+                    fontFamily: 'inherit',
+                    height: 40,
+                    width: 40,
+                    animations: {
+                        enabled: false
+                    },
+                    sparkline: {
+                        enabled: true
+                    },
+                },
+                tooltip: {
+                    enabled: false,
+                },
+                plotOptions: {
+                    radialBar: {
+                        hollow: {
+                            margin: 0,
+                            size: '75%'
+                        },
+                        track: {
+                            margin: 0
+                        },
+                        dataLabels: {
+                            show: false
+                        }
+                    }
+                },
+                colors: ["#206bc4"],
+                series: [35],
+            })).render();
+        });
+        // @@formatter:on
+    </script>
+    <script>
+        // @@formatter:off
+        document.addEventListener("DOMContentLoaded", function () {
+            window.ApexCharts && (new ApexCharts(document.getElementById('chart-commission-earnedbyday'), {
+                chart: {
+                    type: "area",
+                    fontFamily: 'inherit',
+                    height: 152,
+                    sparkline: {
+                        enabled: true
+                    },
+                    animations: {
+                        enabled: false
+                    },
+                },
+                markers: {
+                    shape: "circle",
+                    size: [3]
+                },
+                dataLabels: {
+                    enabled: false,
+                },
+                fill: {
+                    opacity: .16,
+                    type: 'solid'
+                },
+                stroke: {
+                    width: 2,
+                    lineCap: "round",
+                    curve: "straight",
+                },
+                series: [{
+                    name: "@Model.DailyCommissionTotal.Title",
+                    data: [@Model.DailyCommissionTotal.ToValueString()]
+                }],
+                grid: {
+                    strokeDashArray: 4,
+                },
+                xaxis: {
+                    labels: {
+                        padding: 0,
+                    },
+                    tooltip: {
+                        enabled: false
+                    },
+                    axisBorder: {
+                        show: false,
+                    },
+                    type: 'datetime',
+                },
+                yaxis: {
+                    labels: {
+                        padding: 4
+                    },
+                },
+                labels: [
+                    @Html.Raw(Model.DailyCommissionTotal.ToTitleString())
+                ],
+                colors: ["#206bc4"],
+                legend: {
+                    show: false,
+                },
+                point: {
+                    show: false
+                },
+            })).render();
+        });
+        // @@formatter:on
+    </script>
+}
