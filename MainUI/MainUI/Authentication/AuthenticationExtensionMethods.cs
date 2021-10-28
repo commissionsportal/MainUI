@@ -14,11 +14,13 @@ namespace MainUI.Authentication
 
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true);
 
-            if (string.IsNullOrWhiteSpace(apiToken))
+            var authUrl = System.Environment.GetEnvironmentVariable("AuthUrl");
+
+            if (!string.IsNullOrWhiteSpace(authUrl))
             {
                 services.AddTransient<IAuthTokenProvider, LoginTokenProvider>();
             }
-            else
+            else if(!string.IsNullOrWhiteSpace(apiToken))
             {
                 services.AddSingleton<IAuthTokenProvider>(new ApiKeyTokenProvider(apiToken));
             }
