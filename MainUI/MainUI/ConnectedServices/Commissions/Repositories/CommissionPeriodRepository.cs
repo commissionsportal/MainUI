@@ -21,7 +21,7 @@ namespace MainUI.ConnectedServices.Commissions.Repositories
             return await _client.GetCurrentPeriodSummary();
         }
 
-        public async Task<CompensationPlan> GetPeriodDetail(string templateId, string periodId)
+        public async Task<CompensationPlan> GetPeriodDetail(long templateId, long periodId)
         {
             return await _client.GetPeriodDetail(templateId, periodId);
         }

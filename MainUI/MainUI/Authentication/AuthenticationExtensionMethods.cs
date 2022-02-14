@@ -6,7 +6,7 @@ namespace MainUI.Authentication
 {
     public static class AuthenticationExtensionMethods
     {
-        public static void AddIdentity(this IServiceCollection services, string apiToken = "")
+        public static void AddIdentity(this IServiceCollection services)
         {
             services.AddTransient<IUserStore<ApplicationUser>, UserStore>();
             services.AddTransient<IRoleStore<ApplicationUser>, RoleStore>();
@@ -16,16 +16,15 @@ namespace MainUI.Authentication
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true);
 
             var sp = services.BuildServiceProvider();
-            var configuration = sp.GetService<IConfiguration>();
-            var authUrl = configuration.GetValue<string>("AuthUrl", "https://auth.commissionsportal.com");
+            var apiToken = sp.GetService<IConfiguration>().GetValue<string>("ApiToken");
 
-            if (!string.IsNullOrWhiteSpace(authUrl))
-            {
-                services.AddTransient<IAuthTokenProvider, LoginTokenProvider>();
-            }
-            else if(!string.IsNullOrWhiteSpace(apiToken))
+            if (!string.IsNullOrWhiteSpace(apiToken))
             {
                 services.AddSingleton<IAuthTokenProvider>(new ApiKeyTokenProvider(apiToken));
+            }
+            else
+            {
+                services.AddTransient<IAuthTokenProvider, LoginTokenProvider>();
             }
 
             services.AddScoped<RoleManager<IdentityRole>, ApplicationRoleManager>();

@@ -31,7 +31,7 @@ namespace MainUI
             services.AddSingleton<IQueryClient, QueryClient>();
             services.AddSingleton<ConnectedServices.AuthService.IAuthClient, ConnectedServices.AuthService.AuthClient>();
 
-            services.AddIdentity("{token}");
+            services.AddIdentity();
 
             services.AddControllersWithViews();
         }

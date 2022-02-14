@@ -10,7 +10,9 @@
     <div class="col">
         <!-- Page pre-title -->
         <div class="page-pretitle">
-            @Model.Period.BeginString - @Model.Period.EndString
+            <a href="/Commissions/CommissionPeriods/@Model.Period.Begin.ToString("MM-dd-yyyy")">
+                @Model.Period.BeginString - @Model.Period.EndString
+             </a>
         </div>
         <h2 class="page-title">
             Commission Period Summary

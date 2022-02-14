@@ -5,7 +5,7 @@ namespace MainUI.ConnectedServices.Commissions.Repositories.Queries
 {
     public static class PeriodDetailQuery
     {
-        public static async Task<CompensationPlan> GetPeriodDetail(this IQueryClient client, string templateId, string periodId)
+        public static async Task<CompensationPlan> GetPeriodDetail(this IQueryClient client, long templateId, long periodId)
         {
             var qryRes = await client.PostQuery<CommissionPeriodDetailResult>(@"
      {

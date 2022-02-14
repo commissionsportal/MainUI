@@ -95,9 +95,16 @@ namespace MainUI.Controllers
             return Math.Round(res, 1);
         }
 
-        public async Task<IActionResult> CommissionPeriodDetail(string templateId, string periodId)
+        public async Task<IActionResult> CommissionPeriodDetail(long? templateId, long? periodId)
         {
-            var qryResult = await _commissionPeriodRepository.GetPeriodDetail(templateId, periodId);
+            if (!templateId.HasValue || !periodId.HasValue)
+            {
+                var defaultVals = await _commissionPeriodRepository.GetCurrentPeriodSummary();
+                templateId = templateId.HasValue ? templateId.Value : defaultVals.TemplateId;
+                periodId = periodId.HasValue ? periodId.Value : defaultVals?.PeriodId;
+            }
+
+            var qryResult = await _commissionPeriodRepository.GetPeriodDetail(templateId.Value, periodId.Value);
             //qryResult.Periods = qryResult.Periods.Reverse().ToArray();
             var curPeriod = qryResult.Periods.Where(x => x.Begin == qryResult.Period.Begin).First();
 

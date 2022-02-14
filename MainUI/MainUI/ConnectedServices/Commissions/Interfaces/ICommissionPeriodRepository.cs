@@ -9,7 +9,7 @@ namespace MainUI.ConnectedServices.Commissions.Interfaces
     {
         Task<IEnumerable<Models.Period>> GetPeriods(DateTime dateTime, int pageSize);
         Task<CurrentPeriodDetail> GetCurrentPeriodSummary();
-        Task<CompensationPlan> GetPeriodDetail(string templateId, string periodId);
+        Task<CompensationPlan> GetPeriodDetail(long templateId, long periodId);
     }
 
     public class CompensationPlan

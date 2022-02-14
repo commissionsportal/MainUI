@@ -124,7 +124,7 @@ namespace MainUI.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> CorporateTrees()
+        public IActionResult CorporateTrees()
         {
             return View();
         }
