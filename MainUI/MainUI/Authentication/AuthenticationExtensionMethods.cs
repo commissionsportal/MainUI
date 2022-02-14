@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace MainUI.Authentication
@@ -14,7 +15,9 @@ namespace MainUI.Authentication
 
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true);
 
-            var authUrl = System.Environment.GetEnvironmentVariable("AuthUrl");
+            var sp = services.BuildServiceProvider();
+            var configuration = sp.GetService<IConfiguration>();
+            var authUrl = configuration.GetValue<string>("AuthUrl", "https://auth.commissionsportal.com");
 
             if (!string.IsNullOrWhiteSpace(authUrl))
             {

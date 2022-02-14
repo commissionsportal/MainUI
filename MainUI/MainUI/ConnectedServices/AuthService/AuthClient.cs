@@ -12,7 +12,7 @@ namespace MainUI.ConnectedServices.AuthService
 
         public AuthClient(IConfiguration configuration)
         {
-            _baseUrl = configuration.GetValue<string>("AuthUrl");
+            _baseUrl = configuration.GetValue<string>("AuthUrl", "https://auth.commissionsportal.com");
         }
 
         public async Task<T> GetValue<T>(string url)
