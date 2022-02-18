@@ -15,20 +15,22 @@ namespace MainUI.Authentication
 
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true);
 
-            var sp = services.BuildServiceProvider();
-            var apiToken = sp.GetService<IConfiguration>().GetValue<string>("ApiToken");
-
-            if (!string.IsNullOrWhiteSpace(apiToken))
+            using (var scope = services.BuildServiceProvider())
             {
-                services.AddSingleton<IAuthTokenProvider>(new ApiKeyTokenProvider(apiToken));
-            }
-            else
-            {
-                services.AddTransient<IAuthTokenProvider, LoginTokenProvider>();
-            }
+                var apiToken = scope.GetService<IConfiguration>().GetValue<string>("ApiToken");
 
-            services.AddScoped<RoleManager<IdentityRole>, ApplicationRoleManager>();
-            services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, AdditionalUserClaimsPrincipalFactory>();
+                if (!string.IsNullOrWhiteSpace(apiToken))
+                {
+                    services.AddSingleton<IAuthTokenProvider>(new ApiKeyTokenProvider(apiToken));
+                }
+                else
+                {
+                    services.AddTransient<IAuthTokenProvider, LoginTokenProvider>();
+                }
+
+                services.AddScoped<RoleManager<IdentityRole>, ApplicationRoleManager>();
+                services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, AdditionalUserClaimsPrincipalFactory>();
+            }
         }
     }
 }
