@@ -36,7 +36,7 @@ namespace MainUI.Controllers
         public async Task<IActionResult> CommissionPeriods(DateTime? id)
         {
             var pagesize = 10;
-            var date = id.HasValue ? id.Value : DateTime.UtcNow;
+            var date = id.HasValue ? id.Value.AddDays(1) : DateTime.UtcNow;
             var periodArray = await _commissionPeriodRepository.GetPeriods(date, pagesize);
 
             var model = new CommissonPeriodsViewModel
@@ -46,7 +46,7 @@ namespace MainUI.Controllers
                 Periods = periodArray.ToList()
             };
 
-            model.Periods.Sort((x, y) => y.Begin.CompareTo(x.Begin));
+            model.Periods.Sort((x, y) => x.Begin.CompareTo(y.Begin));
 
             return View(model);
         }

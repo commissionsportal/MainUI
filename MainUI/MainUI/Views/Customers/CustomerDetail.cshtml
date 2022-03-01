@@ -9,7 +9,9 @@
     <div class="col">
         <!-- Page pre-title -->
         <div class="page-pretitle">
-            @Model.Period.BeginString - @Model.Period.EndString
+            <a href="/Commissions/CommissionPeriods/@Model.Period.End.ToString("MM-dd-yyyy")?page=CustomerDetail">
+                @Model.Period.BeginString - @Model.Period.EndString
+             </a>
         </div>
         <h2 class="page-title">
             Customer Detail
