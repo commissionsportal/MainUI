@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: commissionsportalmainui 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: commissionsportalmainui
+  template:
+    metadata:
+      labels:
+        app: commissionsportalmainui 
+    spec:
+      containers:
+        - name: commissionsportalmainui 
+          image: comportalregistry.azurecr.io/commissionsportalmainui
+          ports:
+          - containerPort: 80
